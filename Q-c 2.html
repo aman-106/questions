@@ -1,0 +1,72 @@
+<!--
+The scripts on different pages are allowed to access each other if and only if
+ the pages they originate from share the same protocol, port number, and host (same-origin policy)
+
+window.postMessage() provides a controlled mechanism to securely circumvent this restriction
+
+The window.postMessage() method safely enables cross-origin communication between Window objects
+like between a page and an iframe embedded within it.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Parent Window</title>
+</head>
+<body>
+    <h2>
+      The scripts on different pages are allowed to access each other if and only if
+       the pages they originate from share the same protocol, port number, and host (same-origin policy)
+
+      window.postMessage() provides a controlled mechanism to securely circumvent this restriction
+
+      The window.postMessage() method safely enables cross-origin communication between Window objects
+      like between a page and an iframe embedded within it.
+
+      Below is demo.....
+    </h2>
+    <h6>Parent Window</h6>
+    <p>Send Message: <button id="message_button">Hi there iframe</button></p>
+    <p>Got Message:</p>
+    <div id="results"></div>
+    <br/>
+
+    <script>
+        // addEventListener support for IE8
+        function bindEvent(element, eventName, eventHandler) {
+            if (element.addEventListener){
+                element.addEventListener(eventName, eventHandler, false);
+            } else if (element.attachEvent) {
+                element.attachEvent('on' + eventName, eventHandler);
+            }
+        }
+        var iframeSource = './Q-c-1.html';
+        // Create the iframe
+        var iframe = document.createElement('iframe');
+        iframe.setAttribute('src', iframeSource);
+        iframe.setAttribute('id', 'the_iframe');
+        iframe.style.width = 450 + 'px';
+        iframe.style.height = 200 + 'px';
+        document.body.appendChild(iframe);
+        // Send a message to the child iframe
+        var iframeEl = document.getElementById('the_iframe'),
+            messageButton = document.getElementById('message_button'),
+            results = document.getElementById('results');
+        // Send a message to the child iframe
+        var sendMessage = function(msg) {
+            // Make sure you are sending a string, and to stringify JSON
+            iframeEl.contentWindow.postMessage(msg, '*');
+        };
+        // Send random messge data on every button click
+        bindEvent(messageButton, 'click', function (e) {
+            var random = Math.random();
+            sendMessage('' + random);
+        });
+        // Listen to message from child window
+        bindEvent(window, 'message', function (e) {
+            results.innerHTML = e.data;
+        });
+    </script>
+</body>
+</html>
